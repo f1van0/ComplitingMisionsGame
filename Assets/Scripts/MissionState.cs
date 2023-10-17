@@ -2,6 +2,6 @@
 {
     Active = 0,
     Unavailable,
-    TemporarilyUnavailable,
-    Accomplished
+    Locked,
+    Completed
 }
