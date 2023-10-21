@@ -13,7 +13,7 @@ public class MissionPoint : SelectableGameObject
 
     public Guid Id;
 
-    public void Setup(MissionConfig config, MissionState state)
+    public void Setup(MissionConfigSO config, MissionState state)
     {
         Id = config.Id;
         SetState(state);

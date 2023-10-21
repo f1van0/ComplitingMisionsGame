@@ -3,34 +3,17 @@ using UnityEngine;
 
 public class CampaignProgression
 {
-    public readonly MissionsContainer MissionsContainer;
 
-    public CampaignProgression(MissionsContainerSO missions)
+    public readonly MissionsStorage MissionsStorage;
+    public readonly HeroesStorage HeroesStorage;
+
+    public CampaignProgression(MissionsStorage missionsStorage, HeroesStorage heroesStorage)
     {
-        MissionsContainer = new MissionsContainer(missions);
+        MissionsStorage = missionsStorage;
+        HeroesStorage = heroesStorage;
     }
 
-    public void CompleteMission(Guid missionId)
-    {
-        var mission = MissionsContainer.Missions.Find(x => x.ReferencesMission(missionId));
-        CompleteMission(mission, missionId);
-    }
-
-    public MissionConfig GetMissionConfig(Guid missionId)
-    {
-        var missionDefinition = MissionsContainer.Missions.Find(x => x.ReferencesMission(missionId));
-        switch (missionDefinition)
-        {
-            case SingleMissionDefinition singleMissionDefinition:
-                return singleMissionDefinition.Config;
-            case DualMissionDefinition dualMissionDefinition:
-                return dualMissionDefinition.GetConfig(missionId);
-            default:
-                throw new ArgumentOutOfRangeException(nameof(missionId));
-        }
-    }
-
-    private void CompleteMission(MissionDefinition mission, Guid missionId)
+    public void CompleteMission(MissionDefinition mission, Guid missionId)
     {
         switch (mission)
         {

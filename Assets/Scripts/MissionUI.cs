@@ -1,36 +1,51 @@
 ﻿using System;
-using TMPro;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class MissionUI : MonoBehaviour
 {
-    [SerializeField] private MissionDescriptionUI _missionDescriptionUI;
+    public event Action<Guid> MissionStarted;
+    public event Action<Guid> MissionCompleted;
     
-    private CampaignProgression _campaignProgression;
-    private Map _map;
+    [SerializeField] private MissionPreviewInformationUI _mainMissionPreviewUI;
+    [SerializeField] private MissionPreviewInformationUI _additionalMissionPreviewUI;
+    [SerializeField] private MissionDescriptionUI _missionDescriptionUI;
 
-    public void Initialize(Map map, CampaignProgression campaignProgression)
+    
+
+    public void ShowMissionPreview(MissionDefinition definition, Guid id)
     {
-        _map = map;
-        _campaignProgression = campaignProgression;
-        _map.SelectedMission += ShowMission;
+        switch (definition)
+        {
+            case SingleMissionDefinition single:
+                _mainMissionPreviewUI.Setup(single.Mission.Config);
+                _mainMissionPreviewUI.gameObject.SetActive(true);
+                _additionalMissionPreviewUI.gameObject.SetActive(false);
+                break;
+            case DualMissionDefinition dual:
+                _mainMissionPreviewUI.Setup(dual.Mission1.Config);
+                _mainMissionPreviewUI.Setup(dual.Mission2.Config);
+                _mainMissionPreviewUI.gameObject.SetActive(true);
+                _additionalMissionPreviewUI.gameObject.SetActive(true);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(definition));
+        }
     }
 
-    private void ShowMission(Guid missionId)
+    public void HideMission()
     {
-        _missionDescriptionUI.Setup(_campaignProgression.GetMissionConfig(missionId));
+        _mainMissionPreviewUI.gameObject.SetActive(false);
+        _additionalMissionPreviewUI.gameObject.SetActive(false);
+        _missionDescriptionUI.gameObject.SetActive(false);
     }
 
-    private void OnDestroy()
+    public void ShowMissionAccomplishment(MissionConfigSO config)
     {
-        _map.SelectedMission -= ShowMission;
+        _mainMissionPreviewUI.gameObject.SetActive(false);
+        _additionalMissionPreviewUI.gameObject.SetActive(false);
+        _missionDescriptionUI.gameObject.SetActive(true);
+        _missionDescriptionUI.Setup(config);
     }
-}
-
-public class MissionDescriptionUI : MonoBehaviour
-{
-    [SerializeField] private TMP_Text _nameLabel;
-    [SerializeField] private TMP_Text _forewordLabel;
-    [SerializeField] private TMP_Text _playerSideLabel;
-    [SerializeField] private TMP_Text _enemySideLabel;
 }

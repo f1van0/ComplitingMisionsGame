@@ -9,10 +9,10 @@ public abstract class MissionDefinition
 
 public class MissionStateChanged
 {
-    public MissionConfig Mission;
+    public MissionConfigSO Mission;
     public MissionState State;
 
-    public MissionStateChanged(MissionConfig config, MissionState state)
+    public MissionStateChanged(MissionConfigSO config, MissionState state)
     {
         Mission = config;
         State = state;
@@ -21,78 +21,76 @@ public class MissionStateChanged
 
 public class SingleMissionDefinition : MissionDefinition
 {
-    public MissionConfig Config;
-    public MissionState State;
+    public Mission Mission;
 
     public SingleMissionDefinition(SingleMissionDefinitionSO missionDefinitionSo)
     {
-        Config = missionDefinitionSo.config;
-        State = missionDefinitionSo.initialState;
+        Mission = new Mission(missionDefinitionSo.config, missionDefinitionSo.initialState);
     }
     
     public override bool ReferencesMission(Guid guid)
     {
-        return Config.Id == guid;
+        return Mission.Config.Id == guid;
     }
     
     public void SetState(MissionState state)
     {
-        State = state;
-        StateChanged?.Invoke(this, new MissionStateChanged(Config, State));
+        Mission.State = state;
+        StateChanged?.Invoke(this, new MissionStateChanged(Mission.Config, Mission.State));
     }
 }
 
 public class DualMissionDefinition : MissionDefinition
 {
-    public (MissionConfig config, MissionState state) Mission1;
-    public (MissionConfig config, MissionState state) Mission2;
+    public Mission Mission1;
+    public Mission Mission2;
     
     public DualMissionDefinition(DualMissionDefinitionSO missionDefinitionSo)
     {
-        Mission1.config = missionDefinitionSo.config1;
-        Mission1.state = missionDefinitionSo.initialState;
+        Mission1.Config = missionDefinitionSo.config1;
+        Mission1.State = missionDefinitionSo.initialState;
         
-        Mission2.config = missionDefinitionSo.config2;
-        Mission2.state = missionDefinitionSo.initialState;
+        Mission2.Config = missionDefinitionSo.config2;
+        Mission2.State = missionDefinitionSo.initialState;
     }
     
     public override bool ReferencesMission(Guid guid)
     {
-        return Mission1.config.Id == guid || Mission2.config.Id == guid;
+        return Mission1.Config.Id == guid || Mission2.Config.Id == guid;
     }
     
     public void SetState(Guid guid, MissionState state)
     {
-        if (Mission1.config.Id == guid)
+        if (Mission1.Config.Id == guid)
         {
-            Mission1.state = state;
-            StateChanged?.Invoke(this, new MissionStateChanged(Mission1.config, Mission1.state));
+            Mission1.State = state;
+            StateChanged?.Invoke(this, new MissionStateChanged(Mission1.Config, Mission1.State));
 
             if (state == MissionState.Completed)
             {
-                Mission2.state = MissionState.Locked;
-                StateChanged?.Invoke(this, new MissionStateChanged(Mission2.config, Mission1.state));
+                Mission2.State = MissionState.Locked;
+                StateChanged?.Invoke(this, new MissionStateChanged(Mission2.Config, Mission1.State));
             }
         }
-        else if (Mission2.config.Id == guid)
+        else if (Mission2.Config.Id == guid)
         {
-            Mission2.state = state;
-            StateChanged?.Invoke(this, new MissionStateChanged(Mission2.config, Mission2.state));
+            Mission2.State = state;
+            StateChanged?.Invoke(this, new MissionStateChanged(Mission2.Config, Mission2.State));
 
             if (state == MissionState.Completed)
             {
-                Mission1.state = MissionState.Locked;
-                StateChanged?.Invoke(this, new MissionStateChanged(Mission1.config, Mission1.state));
+                Mission1.State = MissionState.Locked;
+                StateChanged?.Invoke(this, new MissionStateChanged(Mission1.Config, Mission1.State));
             }
         }
     }
 
-    public MissionConfig GetConfig(Guid missionId)
+    public MissionConfigSO GetConfig(Guid missionId)
     {
-        if (Mission1.config.Id == missionId)
-            return Mission1.config;
-        else if (Mission2.config.Id == missionId)
-            return Mission2.config;
+        if (Mission1.Config.Id == missionId)
+            return Mission1.Config;
+        else if (Mission2.Config.Id == missionId)
+            return Mission2.Config;
         else
             throw new ArgumentOutOfRangeException(nameof(missionId));
     }

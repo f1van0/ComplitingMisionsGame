@@ -12,11 +12,11 @@ public class Map : MonoBehaviour
 
     private List<MissionPoint> _missionPoints;
     
-    private MissionsContainer _container;
+    private MissionsStorage _storage;
 
-    public void Initialize(MissionsContainer container)
+    public void Initialize(MissionsStorage storage)
     {
-        _container = container;
+        _storage = storage;
         CreateMissionPoints();
     }
 
@@ -29,16 +29,16 @@ public class Map : MonoBehaviour
     {
         _missionPoints = new List<MissionPoint>();
         
-        foreach (var mission in _container.Missions)
+        foreach (var mission in _storage.Missions)
         {
             switch (mission)
             {
-                case DualMissionDefinition dualMissionDefinition:
-                    _missionPoints.Add(CreateMissionPoint(dualMissionDefinition.Mission1.config, dualMissionDefinition.Mission2.state));
-                    _missionPoints.Add(CreateMissionPoint(dualMissionDefinition.Mission2.config, dualMissionDefinition.Mission2.state));
+                case DualMissionDefinition dual:
+                    _missionPoints.Add(CreateMissionPoint(dual.Mission1.Config, dual.Mission2.State));
+                    _missionPoints.Add(CreateMissionPoint(dual.Mission2.Config, dual.Mission2.State));
                     break;
-                case SingleMissionDefinition singleMissionDefinition:
-                    _missionPoints.Add(CreateMissionPoint(singleMissionDefinition.Config, singleMissionDefinition.State));
+                case SingleMissionDefinition single:
+                    _missionPoints.Add(CreateMissionPoint(single.Mission.Config, single.Mission.State));
                     break;
                 default:
                     break;
@@ -48,7 +48,7 @@ public class Map : MonoBehaviour
         }
     }
 
-    public MissionPoint CreateMissionPoint(MissionConfig config, MissionState initialState)
+    public MissionPoint CreateMissionPoint(MissionConfigSO config, MissionState initialState)
     {
         var missionPoint = Instantiate(_pointPrefab, _missionPointsContainer);
         missionPoint.Setup(config, initialState);
