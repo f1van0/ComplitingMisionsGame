@@ -36,7 +36,11 @@ public class MissionsStorage
 
     public void SelectMission(Guid missionId)
     {
-        CurrentMissionDefinition = GetMissionDefinition(missionId);
+        var selectedMissionDefinition = GetMissionDefinition(missionId);
+        if (selectedMissionDefinition.GetState() == MissionState.Completed)
+            return;
+
+        CurrentMissionDefinition = selectedMissionDefinition;
         CurrentMissionId = missionId;
         MissionSelected?.Invoke(CurrentMissionDefinition, CurrentMissionId);
     }
@@ -54,14 +58,16 @@ public class MissionsStorage
         MissionStarted?.Invoke(CurrentMissionConfig);
     }
 
-    public void CompleteStartedMission(Guid missionGuid)
+    public void CompleteStartedMission()
     {
-        if (CurrentMissionId != missionGuid)
+        if (CurrentMissionDefinition == null || CurrentMissionId == Guid.Empty)
         {
-            throw new Exception($"The calling code tries to end a mission that has not been selected");
+            throw new Exception($"Failed to complete a mission which was not started");
         }
         
         MissionCompleted?.Invoke(CurrentMissionDefinition, CurrentMissionId);
+        CurrentMissionDefinition = null;
+        CurrentMissionId = Guid.Empty;
     }
 
     public MissionDefinition GetMissionDefinition(Guid missionId)
@@ -81,5 +87,41 @@ public class MissionsStorage
             default:
                 throw new ArgumentOutOfRangeException(nameof(missionId));
         }
+    }
+
+    public void SetState(MissionDefinition mission, Guid missionId, MissionState state)
+    {
+        switch (mission)
+        {
+            case DualMissionDefinition dualMissionData:
+                dualMissionData.SetState(missionId, state);
+                break;
+            case SingleMissionDefinition singleMissionData:
+                singleMissionData.SetState(state);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(mission));
+        }
+    }
+
+    public void SetState(MissionDefinition mission, MissionState state)
+    {
+        switch (mission)
+        {
+            case DualMissionDefinition dual:
+                dual.SetState(state);
+                break;
+            case SingleMissionDefinition single:
+                single.SetState(state);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    public void SetState(MissionConfigSO config, MissionState state)
+    {
+        var missionDefinition = GetMissionDefinition(config.Id);
+        SetState(missionDefinition, MissionState.Locked);
     }
 }

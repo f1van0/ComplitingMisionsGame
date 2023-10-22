@@ -1,4 +1,5 @@
 ﻿using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class CampaignProgression
@@ -15,16 +16,49 @@ public class CampaignProgression
 
     public void CompleteMission(MissionDefinition mission, Guid missionId)
     {
-        switch (mission)
+        MissionsStorage.SetState(mission, missionId, MissionState.Completed);
+        UnlockMissions(mission);
+        
+        foreach (var missionDefinition in MissionsStorage.Missions)
         {
-            case DualMissionDefinition dualMissionData:
-                dualMissionData.SetState(missionId, MissionState.Completed);
-                break;
-            case SingleMissionDefinition singleMissionData:
-                singleMissionData.SetState(MissionState.Completed);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(mission));
+            if (missionDefinition.GetState() != MissionState.Unavailable)
+                continue;
+            
+            if (!CheckIfMissionSuitsRequirements(missionDefinition)) 
+                continue;
+            
+            MissionsStorage.SetState(missionDefinition, MissionState.Active);
+            LockMissions(missionDefinition);
+        }
+    }
+
+    private bool CheckIfMissionSuitsRequirements(MissionDefinition missionDefinition)
+    {
+        if (missionDefinition.Requirements == null)
+            return true;
+        
+        foreach (var config in missionDefinition.Requirements)
+        {
+            if (MissionsStorage.GetMissionDefinition(config.Id).GetState() != MissionState.Completed)
+                return false;
+        }
+
+        return true;
+    }
+
+    public void LockMissions(MissionDefinition mission)
+    {
+        foreach (var missionToBlock in mission.MissionsToBlockTemporarily)
+        {
+            MissionsStorage.SetState(missionToBlock, MissionState.Locked);
+        }
+    }
+
+    public void UnlockMissions(MissionDefinition mission)
+    {
+        foreach (var missionToBlock in mission.MissionsToBlockTemporarily)
+        {
+            MissionsStorage.SetState(missionToBlock, MissionState.Active);
         }
     }
 }
