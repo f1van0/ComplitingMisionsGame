@@ -14,7 +14,7 @@ public class HeroesStorage
 
     public void AddHero(HeroType heroType)
     {
-        if (TryGetHeroByType(heroType) != null)
+        if (TryGetHeroByType(heroType) != null || heroType == HeroType.Current)
             return;
         
         Heroes.Add(new Hero(heroType)); 

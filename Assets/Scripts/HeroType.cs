@@ -1,6 +1,7 @@
 ﻿public enum HeroType
 {
-    Hawk = 0, //Ястреб
+    Current = 0, //Текущий
+    Hawk, //Ястреб
     Seagull, //Чайка
     Owl, //Совух
     Raven //Ворон
