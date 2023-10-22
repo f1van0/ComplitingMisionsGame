@@ -9,7 +9,9 @@ public class MissionConfigSO : ScriptableObject
 
     public string Number;
     public string Name;
+    [Multiline]
     public string Foreword;
+    [Multiline]
     public string Description;
     public string PlayerSide;
     public string EnemySide;
