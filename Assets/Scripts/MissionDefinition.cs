@@ -103,7 +103,7 @@ public class DualMissionDefinition : MissionDefinition
             if (state == MissionState.Completed)
             {
                 Mission2.State = MissionState.Locked;
-                StateChanged?.Invoke(this, new MissionStateChanged(Mission2.Config, Mission1.State));
+                StateChanged?.Invoke(this, new MissionStateChanged(Mission2.Config, Mission2.State));
             }
         }
         else if (Mission2.Config.Id == guid)
