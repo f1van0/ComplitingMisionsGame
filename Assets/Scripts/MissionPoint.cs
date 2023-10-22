@@ -1,10 +1,12 @@
 ﻿using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 
 public class MissionPoint : SelectableGameObject
 {
     [SerializeField] private SpriteRenderer _spriteRenderer;
+    [SerializeField] private TMP_Text _numberText;
     
     [SerializeField] private Color _activeColor;
     [SerializeField] private Color _lockedColor;
@@ -16,6 +18,7 @@ public class MissionPoint : SelectableGameObject
     public void Setup(MissionConfigSO config, MissionState state)
     {
         Id = config.Id;
+        _numberText.text = config.Number;
         SetState(state);
     }
 
