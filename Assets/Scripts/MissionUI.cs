@@ -6,13 +6,28 @@ using UnityEngine.Serialization;
 public class MissionUI : MonoBehaviour
 {
     public event Action<Guid> MissionStarted;
-    public event Action<Guid> MissionCompleted;
+    public event Action MissionCompleted;
     
     [SerializeField] private MissionPreviewInformationUI _mainMissionPreviewUI;
     [SerializeField] private MissionPreviewInformationUI _additionalMissionPreviewUI;
     [SerializeField] private MissionDescriptionUI _missionDescriptionUI;
 
-    
+    private void Start()
+    {
+        _mainMissionPreviewUI.StartMissionPressed += StartMission;
+        _additionalMissionPreviewUI.StartMissionPressed += StartMission;
+        _missionDescriptionUI.MissionCompleted += CompleteMission;
+    }
+
+    private void StartMission(Guid missionId)
+    {
+        MissionStarted?.Invoke(missionId);
+    }
+
+    private void CompleteMission()
+    {
+        MissionCompleted?.Invoke();
+    }
 
     public void ShowMissionPreview(MissionDefinition definition, Guid id)
     {
@@ -25,7 +40,7 @@ public class MissionUI : MonoBehaviour
                 break;
             case DualMissionDefinition dual:
                 _mainMissionPreviewUI.Setup(dual.Mission1.Config);
-                _mainMissionPreviewUI.Setup(dual.Mission2.Config);
+                _additionalMissionPreviewUI.Setup(dual.Mission2.Config);
                 _mainMissionPreviewUI.gameObject.SetActive(true);
                 _additionalMissionPreviewUI.gameObject.SetActive(true);
                 break;
@@ -47,5 +62,12 @@ public class MissionUI : MonoBehaviour
         _additionalMissionPreviewUI.gameObject.SetActive(false);
         _missionDescriptionUI.gameObject.SetActive(true);
         _missionDescriptionUI.Setup(config);
+    }
+
+    private void OnDestroy()
+    {
+        _mainMissionPreviewUI.StartMissionPressed -= StartMission;
+        _additionalMissionPreviewUI.StartMissionPressed -= StartMission;
+        _missionDescriptionUI.MissionCompleted -= CompleteMission;
     }
 }
