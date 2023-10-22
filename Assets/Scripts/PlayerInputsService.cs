@@ -26,8 +26,7 @@ public class PlayerInputsService : MonoBehaviour
         
         if (Input.GetMouseButton(0))
         {
-            _ray = new Ray(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector3.forward);
-            var hits = Physics.RaycastAll(_ray, 100, _layerMask);
+            var hits = Physics2D.RaycastAll(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector3.forward, _layerMask);
             
             foreach (var hit in hits)
             {
