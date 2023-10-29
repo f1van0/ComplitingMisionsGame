@@ -14,3 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   missions:
   - {fileID: 11400000, guid: f0bba7dafe162234aa32ba8460072b24, type: 2}
+  - {fileID: 11400000, guid: 9c75b56421578a144a86d3e058781eba, type: 2}
+  - {fileID: 11400000, guid: 3c486d1e9c11ec548b6d5b634282d517, type: 2}
+  - {fileID: 11400000, guid: 0e360ec04cede4746b9d065cbbdd2c79, type: 2}
+  - {fileID: 11400000, guid: 128b8af68ba623246bb27dcf1e1438aa, type: 2}
+  - {fileID: 11400000, guid: 769f0931dcca7a94a9bfd6b9c3f8655d, type: 2}
+  - {fileID: 11400000, guid: 9b941a04127fe0f44a9e0ddeaff410b8, type: 2}
+  - {fileID: 11400000, guid: 781b3d06fe41309449113ce64bb7c2cd, type: 2}
+  - {fileID: 11400000, guid: 63794d2591b6470469c55ea1782098fb, type: 2}
+  - {fileID: 11400000, guid: e90d877d4f1d2734481b96a75b22ca8d, type: 2}
+  - {fileID: 11400000, guid: 82fa45a333c213f429aa0255e6984683, type: 2}

@@ -10,8 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 285bfca62b7b46d283fb6f4592c43310, type: 3}
-  m_Name: SingleMissionDefinitionAsset
+  m_Name: 10_missionDefinition
   m_EditorClassIdentifier: 
-  requirement: []
-  missionsToShow: []
-  config: {fileID: 0}
+  Requirements:
+  - {fileID: 11400000, guid: 7e68f8a05eb60c14c889a41de8298dfd, type: 2}
+  MissionsToBlockTemporarily: []
+  config: {fileID: 11400000, guid: 72d4bee1966894b44b65f9b950134ab0, type: 2}
+  initialState: 1

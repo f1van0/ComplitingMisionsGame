@@ -9,15 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 85aad296ab814b3098b96800c309c7af, type: 3}
-  m_Name: MissionConfigAsset
+  m_Script: {fileID: 11500000, guid: 285bfca62b7b46d283fb6f4592c43310, type: 3}
+  m_Name: 1_missionDefinition
   m_EditorClassIdentifier: 
-  Number: 
-  Name: 
-  Foreword: 
-  Description: 
-  PlayerSide: 
-  EnemySide: 
-  Position: {x: 0, y: 0}
-  UnlockingHeroes: 
-  HeroPoints: []
+  requirement: []
+  missionsToShow: []
+  config: {fileID: 11400000, guid: e84a74af194fdf7419d6a06c7d57d5a9, type: 2}
+  initialState: 0

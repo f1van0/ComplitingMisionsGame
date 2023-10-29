@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 285bfca62b7b46d283fb6f4592c43310, type: 3}
+  m_Name: 5_missionDefinition
+  m_EditorClassIdentifier: 
+  Requirements:
+  - {fileID: 11400000, guid: 128b481e6015fd24d9dbcfecdf1f4896, type: 2}
+  MissionsToBlockTemporarily: []
+  config: {fileID: 11400000, guid: 413f399fa443bea4ea8dfd764bdf4558, type: 2}
+  initialState: 1
