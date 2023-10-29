@@ -4,15 +4,7 @@ using UnityEngine;
 
 public class MissionsStorage
 {
-    public event Action<MissionDefinition, Guid> MissionSelected;
-    public event Action<MissionConfigSO> MissionStarted;
-    public event Action<MissionDefinition, Guid> MissionCompleted;
-    
     public List<MissionDefinition> Missions;
-    
-    public MissionDefinition CurrentMissionDefinition;
-    public MissionConfigSO CurrentMissionConfig;
-    public Guid CurrentMissionId;
 
     public MissionsStorage(MissionsContainerSO container)
     {
@@ -32,42 +24,6 @@ public class MissionsStorage
                     break;
             }
         }
-    }
-
-    public void SelectMission(Guid missionId)
-    {
-        var selectedMissionDefinition = GetMissionDefinition(missionId);
-        if (selectedMissionDefinition.GetState() == MissionState.Completed)
-            return;
-
-        CurrentMissionDefinition = selectedMissionDefinition;
-        CurrentMissionId = missionId;
-        MissionSelected?.Invoke(CurrentMissionDefinition, CurrentMissionId);
-    }
-
-    public void StartSelectedMission(Guid missionId)
-    {
-        if (CurrentMissionDefinition != GetMissionDefinition(missionId))
-        {
-            throw new Exception($"The Id of the mission to be started does not belong to the currently selected mission");
-        }
-        
-        CurrentMissionId = missionId;
-        CurrentMissionConfig = GetMissionConfig(CurrentMissionId);
-        
-        MissionStarted?.Invoke(CurrentMissionConfig);
-    }
-
-    public void CompleteStartedMission()
-    {
-        if (CurrentMissionDefinition == null || CurrentMissionId == Guid.Empty)
-        {
-            throw new Exception($"Failed to complete a mission which was not started");
-        }
-        
-        MissionCompleted?.Invoke(CurrentMissionDefinition, CurrentMissionId);
-        CurrentMissionDefinition = null;
-        CurrentMissionId = Guid.Empty;
     }
 
     public MissionDefinition GetMissionDefinition(Guid missionId)
