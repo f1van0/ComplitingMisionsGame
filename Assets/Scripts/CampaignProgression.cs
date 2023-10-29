@@ -16,6 +16,8 @@ public class CampaignProgression
     private MissionConfigSO _currentMissionConfig;
     private Guid _currentMissionId;
 
+    private Hero _selectedHero;
+
     public CampaignProgression(MissionsStorage missionsStorage, HeroesStorage heroesStorage)
     {
         MissionsStorage = missionsStorage;
@@ -32,8 +34,25 @@ public class CampaignProgression
         _currentMissionId = missionId;
         MissionSelected?.Invoke(_currentMissionDefinition, _currentMissionId);
     }
+
+    public void SelectHero(HeroType type)
+    {
+        if (HeroesStorage.TryGetHeroByType(type, out var hero))
+        {
+            _selectedHero = hero;
+        }
+        else
+        {
+            throw new Exception("The Hero you want to choose is not exists in storage.");
+        }
+    }
+
     public void StartSelectedMission(Guid missionId)
     {
+        if (_selectedHero == null)
+        {
+            return;
+        }
         
         if (_currentMissionDefinition != MissionsStorage.GetMissionDefinition(missionId))
         {
@@ -63,6 +82,7 @@ public class CampaignProgression
     {
         MissionsStorage.SetState(_currentMissionDefinition, _currentMissionId, MissionState.Completed);
         UnlockMissions(_currentMissionDefinition);
+        HeroesStorage.UnlockHeroes(_currentMissionConfig.UnlockingHeroes);
         UpdateHeroStats(_currentMissionConfig.HeroPoints);
         
         foreach (var missionDefinition in MissionsStorage.Missions)
@@ -76,6 +96,20 @@ public class CampaignProgression
             MissionsStorage.SetState(missionDefinition, MissionState.Active);
             LockMissions(missionDefinition);
         }
+    }
+
+    private void UpdateHeroStats(List<InspectorKeyValue<HeroType, int>> heroPoints)
+    {
+        var copiedList = new List<InspectorKeyValue<HeroType, int>>(heroPoints);
+        foreach (var heroPoint in copiedList)
+        {
+            if (heroPoint.Key == HeroType.Current)
+            {
+                heroPoint.Key = _selectedHero.Type;
+            }
+        }
+
+        HeroesStorage.ChangeStats(copiedList);
     }
 
     private bool CheckIfMissionSuitsRequirements(MissionDefinition missionDefinition)
