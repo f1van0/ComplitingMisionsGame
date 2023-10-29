@@ -34,7 +34,7 @@ public class MissionUI : MonoBehaviour
         switch (definition)
         {
             case SingleMissionDefinition single:
-                _mainMissionPreviewUI.Setup(single.Mission.Config);
+                _mainMissionPreviewUI.Setup(single.MissionData.Config);
                 _mainMissionPreviewUI.gameObject.SetActive(true);
                 _additionalMissionPreviewUI.gameObject.SetActive(false);
                 break;

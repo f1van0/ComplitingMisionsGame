@@ -38,7 +38,7 @@ public class Map : MonoBehaviour
                     _missionPoints.Add(CreateMissionPoint(dual.Mission2.Config, dual.Mission2.State));
                     break;
                 case SingleMissionDefinition single:
-                    _missionPoints.Add(CreateMissionPoint(single.Mission.Config, single.Mission.State));
+                    _missionPoints.Add(CreateMissionPoint(single.MissionData.Config, single.MissionData.State));
                     break;
                 default:
                     break;

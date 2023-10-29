@@ -240,7 +240,7 @@ GameObject:
   - component: {fileID: 1494688313406148752}
   - component: {fileID: 1069293690053885850}
   m_Layer: 5
-  m_Name: MissionPreview
+  m_Name: MissionPreviewUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

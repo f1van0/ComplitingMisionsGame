@@ -37,7 +37,7 @@ public class MissionsStorage
         switch (missionDefinition)
         {
             case SingleMissionDefinition singleMissionDefinition:
-                return singleMissionDefinition.Mission.Config;
+                return singleMissionDefinition.MissionData.Config;
             case DualMissionDefinition dualMissionDefinition:
                 return dualMissionDefinition.GetConfig(missionId);
             default:

@@ -26,43 +26,43 @@ public class MissionStateChanged
 
 public class SingleMissionDefinition : MissionDefinition
 {
-    public Mission Mission;
+    public MissionData MissionData;
 
     public SingleMissionDefinition(SingleMissionDefinitionSO missionDefinitionSo)
     {
         MissionsToBlockTemporarily = missionDefinitionSo.MissionsToBlockTemporarily;
         Requirements = missionDefinitionSo.Requirements;
-        Mission = new Mission(missionDefinitionSo.config, missionDefinitionSo.initialState);
+        MissionData = new MissionData(missionDefinitionSo.config, missionDefinitionSo.initialState);
     }
     
     public override bool ReferencesMission(Guid guid)
     {
-        return Mission.Config.Id == guid;
+        return MissionData.Config.Id == guid;
     }
 
     public override MissionState GetState()
     {
-        return Mission.State;
+        return MissionData.State;
     }
 
     public void SetState(MissionState state)
     {
-        Mission.State = state;
-        StateChanged?.Invoke(this, new MissionStateChanged(Mission.Config, Mission.State));
+        MissionData.State = state;
+        StateChanged?.Invoke(this, new MissionStateChanged(MissionData.Config, MissionData.State));
     }
 }
 
 public class DualMissionDefinition : MissionDefinition
 {
-    public Mission Mission1;
-    public Mission Mission2;
+    public MissionData Mission1;
+    public MissionData Mission2;
     
     public DualMissionDefinition(DualMissionDefinitionSO missionDefinitionSo)
     {
         MissionsToBlockTemporarily = missionDefinitionSo.MissionsToBlockTemporarily;
         Requirements = missionDefinitionSo.Requirements;
-        Mission1 = new Mission(missionDefinitionSo.config1, missionDefinitionSo.initialState);
-        Mission2 = new Mission(missionDefinitionSo.config2, missionDefinitionSo.initialState);
+        Mission1 = new MissionData(missionDefinitionSo.config1, missionDefinitionSo.initialState);
+        Mission2 = new MissionData(missionDefinitionSo.config2, missionDefinitionSo.initialState);
     }
     
     public override bool ReferencesMission(Guid guid)

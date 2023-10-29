@@ -1,10 +1,10 @@
-﻿public class Hero
+﻿public class HeroData
 {
     public HeroType Type;
     public int Score;
     public bool IsUnlocked;
 
-    public Hero(HeroType type, int score, bool isUnlocked)
+    public HeroData(HeroType type, int score, bool isUnlocked)
     {
         Type = type;
         Score = score;

@@ -16,7 +16,7 @@ public class CampaignProgression
     private MissionConfigSO _currentMissionConfig;
     private Guid _currentMissionId;
 
-    private Hero _selectedHero;
+    private HeroData _selectedHero;
 
     public CampaignProgression(MissionsStorage missionsStorage, HeroesStorage heroesStorage)
     {

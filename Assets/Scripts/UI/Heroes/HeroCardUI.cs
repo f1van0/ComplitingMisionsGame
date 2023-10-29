@@ -21,17 +21,17 @@ public class HeroCardUI : MonoBehaviour
         _toggle.onValueChanged.AddListener(ChangeState);
     }
 
-    public void Setup(Hero hero, ToggleGroup toggleGroup)
+    public void Setup(HeroData heroData, ToggleGroup toggleGroup)
     {
         _toggle.group = toggleGroup;
-        SetValues(hero);
+        SetValues(heroData);
     }
 
-    public void SetValues(Hero hero)
+    public void SetValues(HeroData heroData)
     {
-        _nameLabel.text = hero.Type.ToString();
-        _scoreLabel.text = hero.Score.ToString();
-        HeroType = hero.Type;
+        _nameLabel.text = heroData.Type.ToString();
+        _scoreLabel.text = heroData.Score.ToString();
+        HeroType = heroData.Type;
     }
 
     public void OnDestroy()

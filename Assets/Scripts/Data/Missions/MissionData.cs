@@ -1,12 +1,12 @@
 ﻿using System;
 
 [Serializable]
-public class Mission
+public class MissionData
 {
     public MissionConfigSO Config;
     public MissionState State;
 
-    public Mission(MissionConfigSO config, MissionState state)
+    public MissionData(MissionConfigSO config, MissionState state)
     {
         Config = config;
         State = state;

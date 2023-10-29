@@ -21,28 +21,28 @@ public class HeroesUI : MonoBehaviour
         }
     }
 
-    public void AddHero(Hero hero)
+    public void AddHero(HeroData heroData)
     {
         var heroCard = Instantiate(_heroCardPrefab, _heroesGroup.transform);
-        heroCard.Setup(hero, _heroesGroup);
+        heroCard.Setup(heroData, _heroesGroup);
         _heroCards.Add(heroCard);
         heroCard.StateChanged += ChangeSelectedHero;
     }
 
-    public void SetHeroData(Hero hero)
+    public void SetHeroData(HeroData heroData)
     {
-        if (hero.IsUnlocked == false)
+        if (heroData.IsUnlocked == false)
             return;
         
-        var foundHero = _heroCards.FirstOrDefault(x => x.HeroType == hero.Type);
+        var foundHero = _heroCards.FirstOrDefault(x => x.HeroType == heroData.Type);
 
         if (foundHero == null)
         {
-            AddHero(hero);
+            AddHero(heroData);
         }
         else
         {
-            foundHero.SetValues(hero);
+            foundHero.SetValues(heroData);
         }
     }
 

@@ -7,35 +7,35 @@ using Unity.VisualScripting;
 
 public class HeroesStorage
 {
-    public event Action<Hero> HeroAdded;
-    public event Action<Hero> HeroDataUpdated;
+    public event Action<HeroData> HeroAdded;
+    public event Action<HeroData> HeroDataUpdated;
     
-    private List<Hero> Heroes;
+    private List<HeroData> Heroes;
 
     public HeroesStorage()
     {
-        Heroes = new List<Hero>();
+        Heroes = new List<HeroData>();
         SetHeroData(HeroType.Hawk, 0, true);
     }
 
     public void SetHeroData(HeroType heroType, int score, bool isUnlocking)
     {
-        Hero hero;
-        if (TryGetHeroByType(heroType, out hero))
+        HeroData heroData;
+        if (TryGetHeroByType(heroType, out heroData))
         {
             if (isUnlocking)
-                hero.IsUnlocked = true;
+                heroData.IsUnlocked = true;
             
-            hero.Score += score;
+            heroData.Score += score;
             
         }
         else
         {
-            hero = new Hero(heroType, score, isUnlocking);
-            Heroes.Add(hero);
+            heroData = new HeroData(heroType, score, isUnlocking);
+            Heroes.Add(heroData);
         }
         
-        HeroDataUpdated?.Invoke(hero);
+        HeroDataUpdated?.Invoke(heroData);
     }
     
     public void UnlockHero(HeroType heroType)
@@ -47,10 +47,10 @@ public class HeroesStorage
     }
 
     [CanBeNull]
-    public bool TryGetHeroByType(HeroType heroType, out Hero hero)
+    public bool TryGetHeroByType(HeroType heroType, out HeroData heroData)
     {
-        hero = Heroes.FirstOrDefault(x => x.Type == heroType);
-        return hero != null;
+        heroData = Heroes.FirstOrDefault(x => x.Type == heroType);
+        return heroData != null;
     }
 
     public void UnlockHeroes(List<HeroType> heroes)
@@ -69,7 +69,7 @@ public class HeroesStorage
         }
     }
 
-    public List<Hero> GetUnlockedHeroes()
+    public List<HeroData> GetUnlockedHeroes()
     {
         return Heroes.FindAll(x => x.IsUnlocked == true);
     }
