@@ -82,11 +82,18 @@ public class CampaignProgression
     {
         if (missionDefinition.Requirements == null)
             return true;
-        
+
+        MissionDefinition desiredMD;
         foreach (var config in missionDefinition.Requirements)
         {
-            if (MissionsStorage.GetMissionDefinition(config.Id).GetState() != MissionState.Completed)
-                return false;
+            desiredMD = MissionsStorage.GetMissionDefinition(config.Id);
+            if (desiredMD.GetState() != MissionState.Completed)
+            {
+                if (!MissionsStorage.HasCompletedDualMissionInAncestors(desiredMD))
+                {
+                    return false;
+                }
+            }
         }
 
         return true;

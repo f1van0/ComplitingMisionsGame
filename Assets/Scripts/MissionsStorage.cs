@@ -80,4 +80,30 @@ public class MissionsStorage
         var missionDefinition = GetMissionDefinition(config.Id);
         SetState(missionDefinition, MissionState.Locked);
     }
+
+    public bool HasCompletedDualMissionInAncestors(MissionDefinition mission)
+    {
+        if (!Missions.Contains(mission))
+            throw new Exception("The HasCompletedDualMissionInAncestors method received a mission that do not exist in the storage");
+
+        MissionDefinition desiredMD;
+        foreach (var config in mission.Requirements)
+        {
+            desiredMD = GetMissionDefinition(config.Id);
+            if (desiredMD is DualMissionDefinition dualMission 
+                && dualMission.GetState() == MissionState.Completed
+                && dualMission.GetState(config.Id) != MissionState.Completed)
+            {
+                return true;
+            }
+            else
+            {
+                var hasCompletedDualMissionInAncestors = HasCompletedDualMissionInAncestors(desiredMD);
+                if (hasCompletedDualMissionInAncestors)
+                    return true;
+            }
+        }
+
+        return false;
+    }
 }

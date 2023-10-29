@@ -85,6 +85,16 @@ public class DualMissionDefinition : MissionDefinition
         return MissionState.Locked;
     }
 
+    public MissionState GetState(Guid id)
+    {
+        if (Mission1.Config.Id == id)
+            return Mission1.State;
+        else if (Mission2.Config.Id == id)
+            return Mission2.State;
+        else
+            throw new Exception("Cannot get a mission state that is not in DualMissionDefinition");
+    }
+
     public void SetState(MissionState state)
     {
         Mission1.State = state;
