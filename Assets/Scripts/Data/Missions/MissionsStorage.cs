@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Data.Missions;
 using UnityEngine;
 
 public class MissionsStorage
@@ -9,7 +11,7 @@ public class MissionsStorage
     public MissionsStorage(MissionsContainerSO container)
     {
         Missions = new List<MissionDefinition>();
-        
+
         foreach (var mission in container.missions)
         {
             switch (mission)
@@ -30,7 +32,7 @@ public class MissionsStorage
     {
         return Missions.Find(x => x.ReferencesMission(missionId));
     }
-    
+
     public MissionConfigSO GetMissionConfig(Guid missionId)
     {
         var missionDefinition = Missions.Find(x => x.ReferencesMission(missionId));
@@ -45,7 +47,7 @@ public class MissionsStorage
         }
     }
 
-    public void SetState(MissionDefinition mission, Guid missionId, MissionState state)
+    public void SetMissionState(MissionDefinition mission, Guid missionId, MissionState state)
     {
         switch (mission)
         {
@@ -60,7 +62,7 @@ public class MissionsStorage
         }
     }
 
-    public void SetState(MissionDefinition mission, MissionState state)
+    public void SetMissionState(MissionDefinition mission, MissionState state)
     {
         switch (mission)
         {
@@ -76,35 +78,60 @@ public class MissionsStorage
         }
     }
 
-    public void SetState(MissionConfigSO config, MissionState state)
+    public void SetMissionState(MissionConfigSO config, MissionState state)
     {
         var missionDefinition = GetMissionDefinition(config.Id);
-        SetState(missionDefinition, state);
+        SetMissionState(missionDefinition, state);
     }
 
-    public bool HasCompletedDualMissionInAncestors(MissionDefinition mission)
+    public TransitionStatus GetTransitionStatus(Guid missionId)
     {
-        if (!Missions.Contains(mission))
-            throw new Exception("The HasCompletedDualMissionInAncestors method received a mission that do not exist in the storage");
-
-        MissionDefinition desiredMD;
-        foreach (var config in mission.Requirements)
+        MissionDefinition mission = GetMissionDefinition(missionId);
+        MissionState state;
+        switch (mission)
         {
-            desiredMD = GetMissionDefinition(config.Id);
-            if (desiredMD is DualMissionDefinition dualMission 
-                && dualMission.GetState() == MissionState.Completed
-                && dualMission.GetState(config.Id) != MissionState.Completed)
-            {
-                return true;
-            }
-            else
-            {
-                var hasCompletedDualMissionInAncestors = HasCompletedDualMissionInAncestors(desiredMD);
-                if (hasCompletedDualMissionInAncestors)
-                    return true;
-            }
+            case SingleMissionDefinition single:
+                state = single.GetMissionState();
+                break;
+            case DualMissionDefinition dual:
+                if (dual.IsDisabledByChoice(missionId))
+                {
+                    return TransitionStatus.DisabledByChoice;
+                }
+                state = dual.GetMissionState(missionId);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(mission));
         }
 
-        return false;
+        if (state == MissionState.Completed)
+        {
+            return TransitionStatus.Completed;
+        }
+
+        if (state == MissionState.Active)
+        {
+            return TransitionStatus.Unvisited;
+        }
+
+        return AnyParentIsUnvisited(mission);
+    }
+
+    private TransitionStatus AnyParentIsUnvisited(MissionDefinition mission)
+    {
+        var statuses = mission.Requirements.Select(r => GetTransitionStatus(r.Id)).ToArray();
+
+        // can be unvisited or unvisited and locked
+        if (statuses.Any(s => s == TransitionStatus.Unvisited))
+        {
+            return TransitionStatus.Unvisited;
+        }
+
+        if (statuses.Any(s => s == TransitionStatus.DisabledByChoice))
+        {
+            return TransitionStatus.DisabledByChoice;
+        }
+
+        throw new InvalidOperationException("Parent was in incorrect state. Check transition logic");
     }
 }

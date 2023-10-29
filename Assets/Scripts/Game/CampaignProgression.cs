@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Data.Missions;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -27,7 +29,7 @@ public class CampaignProgression
     public void SelectMission(Guid missionId)
     {
         var selectedMissionDefinition = MissionsStorage.GetMissionDefinition(missionId);
-        if (selectedMissionDefinition.GetState() != MissionState.Active)
+        if (selectedMissionDefinition.GetMissionState() != MissionState.Active)
             return;
 
         _currentMissionDefinition = selectedMissionDefinition;
@@ -81,23 +83,23 @@ public class CampaignProgression
 
     public void CompleteCurrentMission()
     {
-        if (_currentMissionDefinition.GetState() == MissionState.Completed)
+        if (_currentMissionDefinition.GetMissionState() == MissionState.Completed)
             throw new Exception("Attempting to complete a mission that has already been completed");
 
-        MissionsStorage.SetState(_currentMissionDefinition, _currentMissionId, MissionState.Completed);
+        MissionsStorage.SetMissionState(_currentMissionDefinition, _currentMissionId, MissionState.Completed);
         UnlockMissions(_currentMissionDefinition);
         HeroesStorage.UnlockHeroes(_currentMissionConfig.UnlockingHeroes);
         UpdateHeroStats(_currentMissionConfig.HeroPoints);
 
         foreach (var missionDefinition in MissionsStorage.Missions)
         {
-            if (missionDefinition.GetState() != MissionState.Unavailable)
+            if (missionDefinition.GetMissionState() != MissionState.Unavailable)
                 continue;
 
-            if (!CheckIfMissionSuitsRequirements(missionDefinition))
+            if (!CanEnterMission(missionDefinition))
                 continue;
 
-            MissionsStorage.SetState(missionDefinition, MissionState.Active);
+            MissionsStorage.SetMissionState(missionDefinition, MissionState.Active);
             LockMissions(missionDefinition);
         }
     }
@@ -116,38 +118,52 @@ public class CampaignProgression
         HeroesStorage.ChangeStats(copiedList);
     }
 
-    private bool CheckIfMissionSuitsRequirements(MissionDefinition missionDefinition)
+    private bool CanEnterMission(MissionDefinition missionDefinition)
     {
         if (missionDefinition.Requirements == null)
             return true;
 
-        MissionDefinition desiredMD;
-        MissionState desiredState;
-        foreach (var config in missionDefinition.Requirements)
+        // check if all parents are completed or disabled by choice
+        TransitionStatus[] transitionStatuses = missionDefinition.Requirements
+            .Select(GetParentTransitionStatus)
+            .ToArray();
+
+        if (transitionStatuses.Contains(TransitionStatus.Unvisited))
         {
-            desiredMD = MissionsStorage.GetMissionDefinition(config.Id);
-            switch (desiredMD)
-            {
-                case DualMissionDefinition dualMissionDefinition:
-                    desiredState = dualMissionDefinition.GetState(config.Id);
-                    break;
-                case SingleMissionDefinition singleMissionDefinition:
-                    desiredState = singleMissionDefinition.GetState();
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(desiredMD));
-            }
-            
-            if (desiredState != MissionState.Completed)
-            {
-                if (!MissionsStorage.HasCompletedDualMissionInAncestors(desiredMD))
-                {
-                    return false;
-                }
-            }
+            return false;
+        }
+
+        if (!transitionStatuses.Contains(TransitionStatus.Completed))
+        {
+            return false;
         }
 
         return true;
+    }
+
+    private TransitionStatus GetParentTransitionStatus(MissionConfigSO config)
+    {
+        Guid missionId = config.Id;
+        MissionDefinition parentMission = MissionsStorage.GetMissionDefinition(missionId);
+        MissionState desiredState;
+        switch (parentMission)
+        {
+            case DualMissionDefinition dualMissionDefinition:
+                desiredState = dualMissionDefinition.GetMissionState(missionId);
+                break;
+            case SingleMissionDefinition singleMissionDefinition:
+                desiredState = singleMissionDefinition.GetMissionState();
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(parentMission));
+        }
+
+        if (desiredState == MissionState.Completed)
+        {
+            return TransitionStatus.Completed;
+        }
+
+        return MissionsStorage.GetTransitionStatus(missionId);
     }
 
     private void LockMissions(MissionDefinition mission)
@@ -165,8 +181,8 @@ public class CampaignProgression
         foreach (var missionToBlock in mission.MissionsToBlockTemporarily)
         {
             var mdToBlock = MissionsStorage.GetMissionDefinition(missionToBlock.Id);
-            if (mdToBlock.GetState() != MissionState.Completed)
-                MissionsStorage.SetState(missionToBlock, state);
+            if (mdToBlock.GetMissionState() != MissionState.Completed)
+                MissionsStorage.SetMissionState(missionToBlock, state);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+using UnityEngine;
 
 public abstract class MissionDefinition
 {
@@ -9,7 +9,13 @@ public abstract class MissionDefinition
     
     public EventHandler<MissionStateChanged> StateChanged;
     public abstract bool ReferencesMission(Guid guid);
-    public abstract MissionState GetState();
+    public abstract MissionState GetMissionState();
+    public bool CanBePassed { get; private set; }
+
+    public void SetCanBePassed(bool value)
+    {
+        CanBePassed = value;
+    }
 }
 
 public class MissionStateChanged
@@ -40,7 +46,7 @@ public class SingleMissionDefinition : MissionDefinition
         return MissionData.Config.Id == guid;
     }
 
-    public override MissionState GetState()
+    public override MissionState GetMissionState()
     {
         return MissionData.State;
     }
@@ -70,7 +76,7 @@ public class DualMissionDefinition : MissionDefinition
         return Mission1.Config.Id == guid || Mission2.Config.Id == guid;
     }
     
-    public override MissionState GetState()// ?
+    public override MissionState GetMissionState() // ???
     {
         if (Mission1.State == Mission2.State)
         {
@@ -85,7 +91,12 @@ public class DualMissionDefinition : MissionDefinition
         return MissionState.Locked;
     }
 
-    public MissionState GetState(Guid id)
+    public bool IsDisabledByChoice(Guid id) // simplify
+    {
+        return GetMissionState(id) != MissionState.Completed && GetMissionState() == MissionState.Completed;
+    }
+
+    public MissionState GetMissionState(Guid id)
     {
         if (Mission1.Config.Id == id)
             return Mission1.State;
@@ -99,26 +110,29 @@ public class DualMissionDefinition : MissionDefinition
     {
         if (Mission1.Config.Id == guid)
         {
-            Mission1.State = state;
-            StateChanged?.Invoke(this, new MissionStateChanged(Mission1.Config, Mission1.State));
+            SetState(Mission1, state);
 
             if (state == MissionState.Completed)
             {
-                Mission2.State = MissionState.Locked;
-                StateChanged?.Invoke(this, new MissionStateChanged(Mission2.Config, Mission2.State));
+                SetState(Mission2, MissionState.Locked);
+                
             }
         }
         else if (Mission2.Config.Id == guid)
         {
-            Mission2.State = state;
-            StateChanged?.Invoke(this, new MissionStateChanged(Mission2.Config, Mission2.State));
+            SetState(Mission2, state);
 
             if (state == MissionState.Completed)
             {
-                Mission1.State = MissionState.Locked;
-                StateChanged?.Invoke(this, new MissionStateChanged(Mission1.Config, Mission1.State));
+                SetState(Mission1, MissionState.Locked);
             }
         }
+    }
+
+    private void SetState(MissionData mission, MissionState state)
+    {
+        mission.State = state;
+        StateChanged?.Invoke(this, new MissionStateChanged(mission.Config, mission.State));
     }
 
     public MissionConfigSO GetConfig(Guid missionId)
