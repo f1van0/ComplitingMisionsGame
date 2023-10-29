@@ -70,7 +70,7 @@ public class DualMissionDefinition : MissionDefinition
         return Mission1.Config.Id == guid || Mission2.Config.Id == guid;
     }
     
-    public override MissionState GetState()
+    public override MissionState GetState()// ?
     {
         if (Mission1.State == Mission2.State)
         {
@@ -93,14 +93,6 @@ public class DualMissionDefinition : MissionDefinition
             return Mission2.State;
         else
             throw new Exception("Cannot get a mission state that is not in DualMissionDefinition");
-    }
-
-    public void SetState(MissionState state)
-    {
-        Mission1.State = state;
-        Mission2.State = state;
-        StateChanged?.Invoke(this, new MissionStateChanged(Mission1.Config, Mission2.State));
-        StateChanged?.Invoke(this, new MissionStateChanged(Mission2.Config, Mission2.State));
     }
     
     public void SetState(Guid guid, MissionState state)

@@ -65,7 +65,8 @@ public class MissionsStorage
         switch (mission)
         {
             case DualMissionDefinition dual:
-                dual.SetState(state);
+                dual.SetState(dual.Mission1.Config.Id, state);
+                dual.SetState(dual.Mission2.Config.Id, state);
                 break;
             case SingleMissionDefinition single:
                 single.SetState(state);
@@ -78,7 +79,7 @@ public class MissionsStorage
     public void SetState(MissionConfigSO config, MissionState state)
     {
         var missionDefinition = GetMissionDefinition(config.Id);
-        SetState(missionDefinition, MissionState.Locked);
+        SetState(missionDefinition, state);
     }
 
     public bool HasCompletedDualMissionInAncestors(MissionDefinition mission)

@@ -46,7 +46,6 @@ public class HeroesStorage
         SetHeroData(heroType, 0, true);
     }
 
-    [CanBeNull]
     public bool TryGetHeroByType(HeroType heroType, out HeroData heroData)
     {
         heroData = Heroes.FirstOrDefault(x => x.Type == heroType);
