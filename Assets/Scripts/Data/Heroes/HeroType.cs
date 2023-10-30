@@ -1,8 +1,11 @@
-﻿public enum HeroType
+﻿namespace Data.Heroes
 {
-    Current = 0, //Текущий
-    Hawk, //Ястреб
-    Seagull, //Чайка
-    Owl, //Совух
-    Raven //Ворон
+    public enum HeroType
+    {
+        Current = 0, //Текущий
+        Hawk, //Ястреб
+        Seagull, //Чайка
+        Owl, //Совух
+        Raven //Ворон
+    }
 }

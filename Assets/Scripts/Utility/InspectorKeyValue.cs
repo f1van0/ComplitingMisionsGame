@@ -1,9 +1,11 @@
 ﻿using System;
-using Unity.Collections;
 
-[Serializable]
-public class InspectorKeyValue<TKey, TValue>
+namespace Utility
 {
-    public TKey Key;
-    public TValue Value;
+    [Serializable]
+    public class InspectorKeyValue<TKey, TValue>
+    {
+        public TKey Key;
+        public TValue Value;
+    }
 }

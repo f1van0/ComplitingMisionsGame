@@ -1,38 +1,41 @@
 ﻿using System;
+using ScriptableObjects;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class MissionPreviewInformationUI : MonoBehaviour
+namespace UI.Missions
 {
-    public event Action<Guid> StartMissionPressed;
-
-    [SerializeField] private TMP_Text _nameLabel;
-    [SerializeField] private TMP_Text _forewordLabel;
-    [SerializeField] private Button _startButton;
-
-    private Guid _id;
-
-    public void Start()
+    public class MissionPreviewInformationUI : MonoBehaviour
     {
-        _startButton.onClick.AddListener(OnStartButtonPressed);
-    }
+        public event Action<Guid> StartMissionPressed;
+
+        [SerializeField] private TMP_Text _nameLabel;
+        [SerializeField] private TMP_Text _forewordLabel;
+        [SerializeField] private Button _startButton;
+
+        private Guid _id;
+
+        public void Start()
+        {
+            _startButton.onClick.AddListener(OnStartButtonPressed);
+        }
     
-    public void Setup(MissionConfigSO config)
-    {
-        _id = config.Id;
-        _nameLabel.text = config.Name;
-        _forewordLabel.text = config.Foreword;
-    }
+        public void Setup(MissionConfigSO config)
+        {
+            _id = config.Id;
+            _nameLabel.text = config.Name;
+            _forewordLabel.text = config.Foreword;
+        }
 
-    private void OnStartButtonPressed()
-    {
-        StartMissionPressed?.Invoke(_id);
-    }
+        private void OnStartButtonPressed()
+        {
+            StartMissionPressed?.Invoke(_id);
+        }
 
-    private void OnDestroy()
-    {
-        _startButton.onClick.RemoveAllListeners();
+        private void OnDestroy()
+        {
+            _startButton.onClick.RemoveAllListeners();
+        }
     }
 }

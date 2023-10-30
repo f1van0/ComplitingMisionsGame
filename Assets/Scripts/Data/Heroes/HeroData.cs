@@ -1,13 +1,16 @@
-﻿public class HeroData
+﻿namespace Data.Heroes
 {
-    public HeroType Type;
-    public int Score;
-    public bool IsUnlocked;
-
-    public HeroData(HeroType type, int score, bool isUnlocked)
+    public class HeroData
     {
-        Type = type;
-        Score = score;
-        IsUnlocked = isUnlocked;
+        public HeroType Type;
+        public int Score;
+        public bool IsUnlocked;
+
+        public HeroData(HeroType type, int score, bool isUnlocked)
+        {
+            Type = type;
+            Score = score;
+            IsUnlocked = isUnlocked;
+        }
     }
 }

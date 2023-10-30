@@ -1,14 +1,18 @@
 ﻿using System;
+using ScriptableObjects;
 
-[Serializable]
-public class MissionData
+namespace Data.Missions
 {
-    public MissionConfigSO Config;
-    public MissionState State;
-
-    public MissionData(MissionConfigSO config, MissionState state)
+    [Serializable]
+    public class MissionData
     {
-        Config = config;
-        State = state;
+        public MissionConfigSO Config;
+        public MissionState State;
+
+        public MissionData(MissionConfigSO config, MissionState state)
+        {
+            Config = config;
+            State = state;
+        }
     }
 }

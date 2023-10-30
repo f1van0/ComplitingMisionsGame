@@ -1,75 +1,76 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
-using Unity.VisualScripting;
+using Utility;
 
-
-public class HeroesStorage
+namespace Data.Heroes
 {
-    public event Action<HeroData> HeroAdded;
-    public event Action<HeroData> HeroDataUpdated;
+    public class HeroesStorage
+    {
+        public event Action<HeroData> HeroAdded;
+        public event Action<HeroData> HeroDataUpdated;
     
-    private List<HeroData> Heroes;
+        private List<HeroData> Heroes;
 
-    public HeroesStorage()
-    {
-        Heroes = new List<HeroData>();
-        SetHeroData(HeroType.Hawk, 0, true);
-    }
+        public HeroesStorage()
+        {
+            Heroes = new List<HeroData>();
+            SetHeroData(HeroType.Hawk, 0, true);
+        }
 
-    public void SetHeroData(HeroType heroType, int score, bool isUnlocking)
-    {
-        HeroData heroData;
-        if (TryGetHeroByType(heroType, out heroData))
+        public void SetHeroData(HeroType heroType, int score, bool isUnlocking)
         {
-            if (isUnlocking)
-                heroData.IsUnlocked = true;
+            HeroData heroData;
+            if (TryGetHeroByType(heroType, out heroData))
+            {
+                if (isUnlocking)
+                    heroData.IsUnlocked = true;
             
-            heroData.Score += score;
+                heroData.Score += score;
             
-        }
-        else
-        {
-            heroData = new HeroData(heroType, score, isUnlocking);
-            Heroes.Add(heroData);
-        }
+            }
+            else
+            {
+                heroData = new HeroData(heroType, score, isUnlocking);
+                Heroes.Add(heroData);
+            }
         
-        HeroDataUpdated?.Invoke(heroData);
-    }
+            HeroDataUpdated?.Invoke(heroData);
+        }
     
-    public void UnlockHero(HeroType heroType)
-    {
-        if (heroType == HeroType.Current)
-            return;
+        public void UnlockHero(HeroType heroType)
+        {
+            if (heroType == HeroType.Current)
+                return;
         
-        SetHeroData(heroType, 0, true);
-    }
-
-    public bool TryGetHeroByType(HeroType heroType, out HeroData heroData)
-    {
-        heroData = Heroes.FirstOrDefault(x => x.Type == heroType);
-        return heroData != null;
-    }
-
-    public void UnlockHeroes(List<HeroType> heroes)
-    {
-        foreach (var hero in heroes)
-        {
-            UnlockHero(hero);
+            SetHeroData(heroType, 0, true);
         }
-    }
 
-    public void ChangeStats(List<InspectorKeyValue<HeroType, int>> heroPoints)
-    {
-        foreach (var pointsForHero in heroPoints)
+        public bool TryGetHeroByType(HeroType heroType, out HeroData heroData)
         {
-            SetHeroData(pointsForHero.Key, pointsForHero.Value, false);
+            heroData = Heroes.FirstOrDefault(x => x.Type == heroType);
+            return heroData != null;
         }
-    }
 
-    public List<HeroData> GetUnlockedHeroes()
-    {
-        return Heroes.FindAll(x => x.IsUnlocked == true);
+        public void UnlockHeroes(List<HeroType> heroes)
+        {
+            foreach (var hero in heroes)
+            {
+                UnlockHero(hero);
+            }
+        }
+
+        public void ChangeStats(List<InspectorKeyValue<HeroType, int>> heroPoints)
+        {
+            foreach (var pointsForHero in heroPoints)
+            {
+                SetHeroData(pointsForHero.Key, pointsForHero.Value, false);
+            }
+        }
+
+        public List<HeroData> GetUnlockedHeroes()
+        {
+            return Heroes.FindAll(x => x.IsUnlocked == true);
+        }
     }
 }

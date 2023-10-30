@@ -1,56 +1,59 @@
 using System;
+using Data.Heroes;
 using TMPro;
-using Unity.PlasticSCM.Editor.WebApi;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using Utility;
 
-public class HeroCardUI : MonoBehaviour
+namespace UI.Heroes
 {
-    public event Action StateChanged;
-
-    [SerializeField] private Toggle _toggle;
-    [SerializeField] private TMP_Text _nameLabel;
-    [SerializeField] private TMP_Text _scoreLabel;
-    [SerializeField] private Outline _outline;
-
-    [HideInInspector] public HeroType HeroType;
-
-    public void Start()
+    public class HeroCardUI : MonoBehaviour
     {
-        _toggle.onValueChanged.AddListener(ChangeState);
-    }
+        public event Action StateChanged;
 
-    public void Setup(HeroData heroData, ToggleGroup toggleGroup)
-    {
-        _toggle.group = toggleGroup;
-        SetValues(heroData);
-    }
+        [SerializeField] private Toggle _toggle;
+        [SerializeField] private TMP_Text _nameLabel;
+        [SerializeField] private TMP_Text _scoreLabel;
+        [SerializeField] private Outline _outline;
 
-    public void SetValues(HeroData heroData)
-    {
-        _nameLabel.text = heroData.Type.ToString();
-        _scoreLabel.text = heroData.Score.ToString();
-        HeroType = heroData.Type;
-    }
+        [HideInInspector] public HeroType HeroType;
 
-    public void OnDestroy()
-    {
-        _toggle.onValueChanged.RemoveListener(ChangeState);
-    }
+        public void Start()
+        {
+            _toggle.onValueChanged.AddListener(ChangeState);
+        }
+
+        public void Setup(HeroData heroData, ToggleGroup toggleGroup)
+        {
+            _toggle.group = toggleGroup;
+            SetValues(heroData);
+        }
+
+        public void SetValues(HeroData heroData)
+        {
+            _nameLabel.text = heroData.Type.GetName();
+            _scoreLabel.text = heroData.Score.ToString();
+            HeroType = heroData.Type;
+        }
+
+        public void OnDestroy()
+        {
+            _toggle.onValueChanged.RemoveListener(ChangeState);
+        }
     
-    private void ChangeState(bool state)
-    {
-        if (state)
-            _outline.effectColor = Color.green;
-        else
-            _outline.effectColor = Color.black;
+        private void ChangeState(bool state)
+        {
+            if (state)
+                _outline.effectColor = Color.green;
+            else
+                _outline.effectColor = Color.black;
 
-        StateChanged?.Invoke();
-    }
+            StateChanged?.Invoke();
+        }
 
-    public void SetInteractivity(bool state)
-    {
-        _toggle.interactable = state;
+        public void SetInteractivity(bool state)
+        {
+            _toggle.interactable = state;
+        }
     }
 }

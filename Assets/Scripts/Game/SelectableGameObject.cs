@@ -1,12 +1,15 @@
 ﻿using System;
 using UnityEngine;
 
-public class SelectableGameObject : MonoBehaviour
+namespace Game
 {
-    public event Action<SelectableGameObject> Selected;
-
-    public virtual void Select()
+    public class SelectableGameObject : MonoBehaviour
     {
-        Selected?.Invoke(this);
+        public event Action<SelectableGameObject> Selected;
+
+        public virtual void Select()
+        {
+            Selected?.Invoke(this);
+        }
     }
 }

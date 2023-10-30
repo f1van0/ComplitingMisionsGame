@@ -1,9 +1,13 @@
-﻿using UnityEngine;
+﻿using Data.Missions;
+using UnityEngine;
 
-[CreateAssetMenu(menuName = "Missions/DualMissionDefinition", fileName = "DualMissionDefinitionAsset", order = 2)]
-public class DualMissionDefinitionSO : MissionDefinitionSO
+namespace ScriptableObjects
 {
-    public MissionConfigSO config1;
-    public MissionConfigSO config2;
-    public MissionState initialState;
+    [CreateAssetMenu(menuName = "Missions/DualMissionDefinition", fileName = "DualMissionDefinitionAsset", order = 2)]
+    public class DualMissionDefinitionSO : MissionDefinitionSO
+    {
+        public MissionConfigSO config1;
+        public MissionConfigSO config2;
+        public MissionState initialState;
+    }
 }

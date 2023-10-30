@@ -1,9 +1,12 @@
-﻿using UnityEngine;
-using UnityEngine.Serialization;
+﻿using Data.Missions;
+using UnityEngine;
 
-[CreateAssetMenu(menuName = "Missions/SingleMissionDefinition", fileName = "SingleMissionDefinitionAsset", order = 2)]
-public class SingleMissionDefinitionSO : MissionDefinitionSO
+namespace ScriptableObjects
 {
-    public MissionConfigSO config;
-    public MissionState initialState = MissionState.Unavailable;
+    [CreateAssetMenu(menuName = "Missions/SingleMissionDefinition", fileName = "SingleMissionDefinitionAsset", order = 2)]
+    public class SingleMissionDefinitionSO : MissionDefinitionSO
+    {
+        public MissionConfigSO config;
+        public MissionState initialState = MissionState.Unavailable;
+    }
 }
